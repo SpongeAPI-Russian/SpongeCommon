@@ -115,6 +115,9 @@ import org.spongepowered.api.service.economy.transaction.TransactionType;
 import org.spongepowered.api.statistic.Statistic;
 import org.spongepowered.api.statistic.StatisticType;
 import org.spongepowered.api.text.BookView;
+import org.spongepowered.api.text.LiteralText;
+import org.spongepowered.api.text.ScoreText;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.chat.ChatVisibility;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextStyle;
@@ -239,6 +242,8 @@ import org.spongepowered.common.scoreboard.builder.SpongeObjectiveBuilder;
 import org.spongepowered.common.scoreboard.builder.SpongeScoreboardBuilder;
 import org.spongepowered.common.scoreboard.builder.SpongeTeamBuilder;
 import org.spongepowered.common.text.impl.BookViewImpl;
+import org.spongepowered.common.text.impl.LiteralTextImpl;
+import org.spongepowered.common.text.impl.ScoreTextImpl;
 import org.spongepowered.common.world.SpongeExplosionBuilder;
 import org.spongepowered.common.world.SpongeLocatableBlockBuilder;
 import org.spongepowered.common.world.SpongeWorldArchetypeBuilder;
@@ -284,6 +289,9 @@ public final class CommonModuleRegistry {
 
     private void registerDefaultSuppliers(SpongeGameRegistry registry) {
         registry
+            .registerBuilderSupplier(Text.Builder.class, LiteralTextImpl.Builder::new)
+            .registerBuilderSupplier(LiteralText.Builder.class, LiteralTextImpl.Builder::new)
+            .registerBuilderSupplier(ScoreText.Builder.class, ScoreTextImpl.Builder::new)
             .registerBuilderSupplier(BookView.Builder.class, BookViewImpl.Builder::new)
             .registerBuilderSupplier(ItemStack.Builder.class, SpongeItemStackBuilder::new)
             .registerBuilderSupplier(TradeOffer.Builder.class, SpongeTradeOfferBuilder::new)

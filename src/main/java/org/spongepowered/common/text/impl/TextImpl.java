@@ -212,7 +212,7 @@ public abstract class TextImpl implements Text {
     }
 
     MoreObjects.ToStringHelper toStringHelper() {
-        return MoreObjects.toStringHelper(Text.class)
+        return MoreObjects.toStringHelper(this)
                 .omitNullValues()
                 .add("format", this.format.isEmpty() ? null : this.format)
                 .add("children", this.children.isEmpty() ? null : this.children)
@@ -276,7 +276,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder color(TextColor color) {
+        public Builder color(TextColor color) {
             this.format = this.format.color(color);
             return this;
         }
@@ -288,7 +288,7 @@ public abstract class TextImpl implements Text {
 
         @Override
         // TODO: Make sure this is the correct behaviour
-        public Text.Builder style(TextStyle... styles) {
+        public Builder style(TextStyle... styles) {
             this.format = this.format.style(this.format.getStyle().and(styles));
             return this;
         }
@@ -299,7 +299,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder onClick(@Nullable ClickAction<?> clickAction) {
+        public Builder onClick(@Nullable ClickAction<?> clickAction) {
             this.clickAction = clickAction;
             return this;
         }
@@ -310,7 +310,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder onHover(@Nullable HoverAction<?> hoverAction) {
+        public Builder onHover(@Nullable HoverAction<?> hoverAction) {
             this.hoverAction = hoverAction;
             return this;
         }
@@ -321,7 +321,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder onShiftClick(@Nullable ShiftClickAction<?> shiftClickAction) {
+        public Builder onShiftClick(@Nullable ShiftClickAction<?> shiftClickAction) {
             this.shiftClickAction = shiftClickAction;
             return this;
         }
@@ -332,19 +332,19 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder append(Text... children) {
+        public Builder append(Text... children) {
             Collections.addAll(this.children, children);
             return this;
         }
 
         @Override
-        public Text.Builder append(Collection<? extends Text> children) {
+        public Builder append(Collection<? extends Text> children) {
             this.children.addAll(children);
             return this;
         }
 
         @Override
-        public Text.Builder append(Iterable<? extends Text> children) {
+        public Builder append(Iterable<? extends Text> children) {
             for (Text child : children) {
                 this.children.add(child);
             }
@@ -352,7 +352,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder append(Iterator<? extends Text> children) {
+        public Builder append(Iterator<? extends Text> children) {
             while (children.hasNext()) {
                 this.children.add(children.next());
             }
@@ -360,19 +360,19 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder insert(int pos, Text... children) {
+        public Builder insert(int pos, Text... children) {
             this.children.addAll(pos, Arrays.asList(children));
             return this;
         }
 
         @Override
-        public Text.Builder insert(int pos, Collection<? extends Text> children) {
+        public Builder insert(int pos, Collection<? extends Text> children) {
             this.children.addAll(pos, children);
             return this;
         }
 
         @Override
-        public Text.Builder insert(int pos, Iterable<? extends Text> children) {
+        public Builder insert(int pos, Iterable<? extends Text> children) {
             for (Text child : children) {
                 this.children.add(pos++, child);
             }
@@ -380,7 +380,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder insert(int pos, Iterator<? extends Text> children) {
+        public Builder insert(int pos, Iterator<? extends Text> children) {
             while (children.hasNext()) {
                 this.children.add(pos++, children.next());
             }
@@ -388,19 +388,19 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder remove(Text... children) {
+        public Builder remove(Text... children) {
             this.children.removeAll(Arrays.asList(children));
             return this;
         }
 
         @Override
-        public Text.Builder remove(Collection<? extends Text> children) {
+        public Builder remove(Collection<? extends Text> children) {
             this.children.removeAll(children);
             return this;
         }
 
         @Override
-        public Text.Builder remove(Iterable<? extends Text> children) {
+        public Builder remove(Iterable<? extends Text> children) {
             for (Text child : children) {
                 this.children.remove(child);
             }
@@ -408,7 +408,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder remove(Iterator<? extends Text> children) {
+        public Builder remove(Iterator<? extends Text> children) {
             while (children.hasNext()) {
                 this.children.remove(children.next());
             }
@@ -416,13 +416,13 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder removeAll() {
+        public Builder removeAll() {
             this.children.clear();
             return this;
         }
 
         @Override
-        public Text.Builder trim() {
+        public Builder trim() {
             Iterator<Text> front = this.children.iterator();
             while (front.hasNext()) {
                 if (front.next().isEmpty()) {
@@ -468,7 +468,7 @@ public abstract class TextImpl implements Text {
         }
 
         MoreObjects.ToStringHelper toStringHelper() {
-            return MoreObjects.toStringHelper(this.getClass())
+            return MoreObjects.toStringHelper(this)
                     .omitNullValues()
                     .add("format", this.format.isEmpty() ? null : this.format)
                     .add("children", this.children.isEmpty() ? null : this.children)
@@ -486,6 +486,5 @@ public abstract class TextImpl implements Text {
         public final Text toText() {
             return this.build();
         }
-
     }
 }

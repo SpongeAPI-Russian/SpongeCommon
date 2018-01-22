@@ -1,27 +1,3 @@
-/*
- * This file is part of Sponge, licensed under the MIT License (MIT).
- *
- * Copyright (c) SpongePowered <https://www.spongepowered.org>
- * Copyright (c) contributors
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package org.spongepowered.common.text.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,7 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.text.LiteralText;
+import org.spongepowered.api.scoreboard.Score;
+import org.spongepowered.api.text.ScoreText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction;
 import org.spongepowered.api.text.action.HoverAction;
@@ -40,28 +17,50 @@ import org.spongepowered.api.text.format.TextStyle;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
-public final class LiteralTextImpl extends TextImpl implements LiteralText {
+public final class ScoreTextImpl extends TextImpl implements ScoreText {
 
-    static final LiteralText EMPTY = new LiteralTextImpl("");
+    final Score score;
+    final Optional<String> override;
 
-    final String content;
-
-    LiteralTextImpl(String content) {
-        this.content = checkNotNull(content, "content");
+    ScoreTextImpl(Score score) {
+        this.score = checkNotNull(score, "score");
+        this.override = Optional.empty();
     }
 
-    LiteralTextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
-            @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction, String content) {
+    /**
+     * Constructs a new immutable {@link ScoreText} for the given score with the
+     * specified formatting and text actions applied.
+     *
+     * @param format The format of the text
+     * @param children The immutable list of children of the text
+     * @param clickAction The click action of the text, or {@code null} for none
+     * @param hoverAction The hover action of the text, or {@code null} for none
+     * @param shiftClickAction The shift click action of the text, or
+     *        {@code null} for none
+     * @param score The score of the text
+     * @param override The text to override the score with, or {@code null} for
+     *        none
+     */
+    ScoreTextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
+            @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction,
+            Score score, @Nullable String override) {
         super(format, children, clickAction, hoverAction, shiftClickAction);
-        this.content = checkNotNull(content, "content");
+        this.score = checkNotNull(score, "score");
+        this.override = Optional.ofNullable(override);
     }
 
     @Override
-    public String getContent() {
-        return this.content;
+    public Score getScore() {
+        return this.score;
+    }
+
+    @Override
+    public Optional<String> getOverride() {
+        return this.override;
     }
 
     @Override
@@ -69,63 +68,81 @@ public final class LiteralTextImpl extends TextImpl implements LiteralText {
         return new Builder(this);
     }
 
-    /**
-     * Represents a {@link Text.Builder} creating immutable {@link LiteralText}
-     * instances.
-     *
-     * @see LiteralText
-     */
-    public static final class Builder extends AbstractBuilder implements LiteralText.Builder {
-
-        private String content;
-
-        public Builder() {
-            this("");
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ScoreTextImpl) || !super.equals(o)) {
+            return false;
         }
 
-        Builder(String content) {
-            this.content(content);
+        ScoreTextImpl that = (ScoreTextImpl) o;
+        return this.score.equals(that.score) && this.override.equals(that.override);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), this.score, this.override);
+    }
+
+    @Override
+    MoreObjects.ToStringHelper toStringHelper() {
+        return super.toStringHelper()
+                .addValue(this.score)
+                .add("override", this.override.orElse(null));
+    }
+
+    public static final class Builder extends TextImpl.AbstractBuilder implements ScoreText.Builder {
+
+        private Score score;
+        @Nullable private String override;
+
+        public Builder() {
         }
 
         Builder(Text text) {
             super(text);
         }
 
-        Builder(LiteralText text) {
+        Builder(ScoreText text) {
             super(text);
-            this.content = text.getContent();
+            this.score = text.getScore();
+            this.override = text.getOverride().orElse(null);
         }
 
         @Override
-        public final String getContent() {
-            return this.content;
+        public final Score getScore() {
+            return this.score;
         }
 
         @Override
-        public Builder content(String content) {
-            this.content = checkNotNull(content, "content");
+        public ScoreText.Builder score(Score score) {
+            this.score = checkNotNull(score, "score");
             return this;
         }
 
         @Override
-        public LiteralText build() {
-            // Special case for empty builder
-            if (this.format.isEmpty() && this.children.isEmpty() && this.clickAction == null && this.hoverAction == null
-                    && this.shiftClickAction == null) {
-                if (this.content.isEmpty()) {
-                    return EMPTY;
-                } else if (this.content.equals(NEW_LINE_STRING)) {
-                    return NEW_LINE;
-                }
-            }
+        public final Optional<String> getOverride() {
+            return Optional.ofNullable(this.override);
+        }
 
-            return new LiteralTextImpl(
+        @Override
+        public ScoreText.Builder override(@Nullable String override) {
+            this.override = override;
+            return this;
+        }
+
+        @Override
+        public ScoreText build() {
+            return new ScoreTextImpl(
                     this.format,
                     ImmutableList.copyOf(this.children),
                     this.clickAction,
                     this.hoverAction,
                     this.shiftClickAction,
-                    this.content);
+                    this.score,
+                    this.override);
         }
 
         @Override
@@ -138,19 +155,20 @@ public final class LiteralTextImpl extends TextImpl implements LiteralText {
             }
 
             Builder that = (Builder) o;
-            return Objects.equal(this.content, that.content);
-
+            return Objects.equal(this.score, that.score)
+                    && Objects.equal(this.override, that.override);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(super.hashCode(), this.content);
+            return Objects.hashCode(super.hashCode(), this.score, this.override);
         }
 
         @Override
         MoreObjects.ToStringHelper toStringHelper() {
             return super.toStringHelper()
-                    .addValue(this.content);
+                    .addValue(this.score)
+                    .add("override", this.override);
         }
 
         @Override
@@ -249,12 +267,12 @@ public final class LiteralTextImpl extends TextImpl implements LiteralText {
         }
 
         @Override
-        public Builder from(final Text value) {
+        public Builder from(Text value) {
             return new Builder(value);
         }
 
         @Override
-        public Text.Builder reset() {
+        public Builder reset() {
             return new Builder();
         }
     }
