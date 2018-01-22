@@ -1,0 +1,491 @@
+/*
+ * This file is part of Sponge, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) SpongePowered <https://www.spongepowered.org>
+ * Copyright (c) contributors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package org.spongepowered.common.text.impl;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import org.spongepowered.api.data.DataContainer;
+import org.spongepowered.api.data.Queries;
+import org.spongepowered.api.text.LiteralText;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.action.ClickAction;
+import org.spongepowered.api.text.action.HoverAction;
+import org.spongepowered.api.text.action.ShiftClickAction;
+import org.spongepowered.api.text.format.TextColor;
+import org.spongepowered.api.text.format.TextFormat;
+import org.spongepowered.api.text.format.TextStyle;
+import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Optional;
+
+import javax.annotation.Nullable;
+
+public abstract class TextImpl implements Text {
+
+    /**
+     * The empty, unformatted {@link Text} instance.
+     */
+    public static final Text EMPTY = LiteralTextImpl.EMPTY;
+    static final char NEW_LINE_CHAR = '\n';
+    static final String NEW_LINE_STRING = "\n";
+
+    /**
+     * An unformatted {@link Text} that will start a new line (if supported).
+     */
+    public static final LiteralText NEW_LINE = new LiteralTextImpl(NEW_LINE_STRING);
+
+    /**
+     * A {@link Comparator} for texts that compares the plain text of two text
+     * instances.
+     */
+    public static Comparator<Text> PLAIN_COMPARATOR = Comparator.comparing(Text::toPlain);
+
+    final TextFormat format;
+    final ImmutableList<Text> children;
+    final Optional<ClickAction<?>> clickAction;
+    final Optional<HoverAction<?>> hoverAction;
+    final Optional<ShiftClickAction<?>> shiftClickAction;
+    /**
+     * An {@link Iterable} providing an {@link Iterator} over this {@link Text}
+     * as well as all children text and their children.
+     */
+    final Iterable<Text> childrenIterable;
+
+    TextImpl() {
+        this.format = TextFormat.NONE; // TODO
+        this.children = ImmutableList.of();
+        this.clickAction = Optional.empty();
+        this.hoverAction = Optional.empty();
+        this.shiftClickAction = Optional.empty();
+        this.childrenIterable = () -> Iterators.singletonIterator(this);
+    }
+
+    TextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
+            @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction) {
+        this.format = checkNotNull(format, "format");
+        this.children = checkNotNull(children, "children");
+        this.clickAction = Optional.ofNullable(clickAction);
+        this.hoverAction = Optional.ofNullable(hoverAction);
+        this.shiftClickAction = Optional.ofNullable(shiftClickAction);
+        this.childrenIterable = () -> new TextIterator(this);
+    }
+
+    @Override
+    public final TextFormat getFormat() {
+        return this.format;
+    }
+
+    @Override
+    public final TextColor getColor() {
+        return this.format.getColor();
+    }
+
+    @Override
+    public final TextStyle getStyle() {
+        return this.format.getStyle();
+    }
+
+    @Override
+    public final ImmutableList<Text> getChildren() {
+        return this.children;
+    }
+
+    @Override
+    public final Iterable<Text> withChildren() {
+        return this.childrenIterable;
+    }
+
+    @Override
+    public final Optional<ClickAction<?>> getClickAction() {
+        return this.clickAction;
+    }
+
+    @Override
+    public final Optional<HoverAction<?>> getHoverAction() {
+        return this.hoverAction;
+    }
+
+    @Override
+    public final Optional<ShiftClickAction<?>> getShiftClickAction() {
+        return this.shiftClickAction;
+    }
+
+    @Override
+    public final boolean isEmpty() {
+        return this == EMPTY;
+    }
+
+    @Override
+    public abstract Builder toBuilder();
+
+    @Override
+    public final String toPlain() {
+        return TextSerializers.PLAIN.serialize(this);
+    }
+
+    @Override
+    public final String toPlainSingle() {
+        return TextSerializers.PLAIN.serializeSingle(this);
+    }
+
+    @Override
+    public final Text concat(Text other) {
+        return this.toBuilder().append(other).build();
+    }
+
+    @Override
+    public final Text trim() {
+        return this.toBuilder().trim().build();
+    }
+
+    @Override
+    public int getContentVersion() {
+        return 1;
+    }
+
+    @Override
+    public DataContainer toContainer() {
+        return DataContainer.createNew()
+                .set(Queries.CONTENT_VERSION, this.getContentVersion())
+                .set(Queries.JSON, TextSerializers.JSON.serialize(this));
+    }
+
+    @Override
+    public int compareTo(Text o) {
+        return PLAIN_COMPARATOR.compare(this, o);
+    }
+
+    @Override
+    public boolean equals(@Nullable Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TextImpl)) {
+            return false;
+        }
+
+        TextImpl that = (TextImpl) o;
+        return this.format.equals(that.format)
+                && this.children.equals(that.children)
+                && this.clickAction.equals(that.clickAction)
+                && this.hoverAction.equals(that.hoverAction)
+                && this.shiftClickAction.equals(that.shiftClickAction);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.format, this.children, this.clickAction, this.hoverAction, this.shiftClickAction);
+    }
+
+    MoreObjects.ToStringHelper toStringHelper() {
+        return MoreObjects.toStringHelper(Text.class)
+                .omitNullValues()
+                .add("format", this.format.isEmpty() ? null : this.format)
+                .add("children", this.children.isEmpty() ? null : this.children)
+                .add("clickAction", this.clickAction.orElse(null))
+                .add("hoverAction", this.hoverAction.orElse(null))
+                .add("shiftClickAction", this.shiftClickAction.orElse(null));
+    }
+
+    @Override
+    public final String toString() {
+        return this.toStringHelper().toString();
+    }
+
+    @Override
+    public final Text toText() {
+        return this;
+    }
+
+    public abstract static class AbstractBuilder implements Text.Builder {
+
+        TextFormat format = TextFormat.NONE;
+        List<Text> children = new ArrayList<>();
+        @Nullable ClickAction<?> clickAction;
+        @Nullable HoverAction<?> hoverAction;
+        @Nullable ShiftClickAction<?> shiftClickAction;
+
+        /**
+         * Constructs a new empty {@link Text.Builder}.
+         */
+        AbstractBuilder() {
+        }
+
+        /**
+         * Constructs a new {@link Text.Builder} with the properties of the given
+         * {@link Text} as initial values.
+         *
+         * @param text The text to copy the values from
+         */
+        AbstractBuilder(Text text) {
+            this.format = text.getFormat();
+            this.children = new ArrayList<>(text.getChildren());
+            this.clickAction = text.getClickAction().orElse(null);
+            this.hoverAction = text.getHoverAction().orElse(null);
+            this.shiftClickAction = text.getShiftClickAction().orElse(null);
+        }
+
+        @Override
+        public final TextFormat getFormat() {
+            return this.format;
+        }
+
+        @Override
+        public Text.Builder format(TextFormat format) {
+            this.format = checkNotNull(format, "format");
+            return this;
+        }
+
+        @Override
+        public final TextColor getColor() {
+            return this.format.getColor();
+        }
+
+        @Override
+        public Text.Builder color(TextColor color) {
+            this.format = this.format.color(color);
+            return this;
+        }
+
+        @Override
+        public final TextStyle getStyle() {
+            return this.format.getStyle();
+        }
+
+        @Override
+        // TODO: Make sure this is the correct behaviour
+        public Text.Builder style(TextStyle... styles) {
+            this.format = this.format.style(this.format.getStyle().and(styles));
+            return this;
+        }
+
+        @Override
+        public final Optional<ClickAction<?>> getClickAction() {
+            return Optional.ofNullable(this.clickAction);
+        }
+
+        @Override
+        public Text.Builder onClick(@Nullable ClickAction<?> clickAction) {
+            this.clickAction = clickAction;
+            return this;
+        }
+
+        @Override
+        public final Optional<HoverAction<?>> getHoverAction() {
+            return Optional.ofNullable(this.hoverAction);
+        }
+
+        @Override
+        public Text.Builder onHover(@Nullable HoverAction<?> hoverAction) {
+            this.hoverAction = hoverAction;
+            return this;
+        }
+
+        @Override
+        public final Optional<ShiftClickAction<?>> getShiftClickAction() {
+            return Optional.ofNullable(this.shiftClickAction);
+        }
+
+        @Override
+        public Text.Builder onShiftClick(@Nullable ShiftClickAction<?> shiftClickAction) {
+            this.shiftClickAction = shiftClickAction;
+            return this;
+        }
+
+        @Override
+        public final List<Text> getChildren() {
+            return Collections.unmodifiableList(this.children);
+        }
+
+        @Override
+        public Text.Builder append(Text... children) {
+            Collections.addAll(this.children, children);
+            return this;
+        }
+
+        @Override
+        public Text.Builder append(Collection<? extends Text> children) {
+            this.children.addAll(children);
+            return this;
+        }
+
+        @Override
+        public Text.Builder append(Iterable<? extends Text> children) {
+            for (Text child : children) {
+                this.children.add(child);
+            }
+            return this;
+        }
+
+        @Override
+        public Text.Builder append(Iterator<? extends Text> children) {
+            while (children.hasNext()) {
+                this.children.add(children.next());
+            }
+            return this;
+        }
+
+        @Override
+        public Text.Builder insert(int pos, Text... children) {
+            this.children.addAll(pos, Arrays.asList(children));
+            return this;
+        }
+
+        @Override
+        public Text.Builder insert(int pos, Collection<? extends Text> children) {
+            this.children.addAll(pos, children);
+            return this;
+        }
+
+        @Override
+        public Text.Builder insert(int pos, Iterable<? extends Text> children) {
+            for (Text child : children) {
+                this.children.add(pos++, child);
+            }
+            return this;
+        }
+
+        @Override
+        public Text.Builder insert(int pos, Iterator<? extends Text> children) {
+            while (children.hasNext()) {
+                this.children.add(pos++, children.next());
+            }
+            return this;
+        }
+
+        @Override
+        public Text.Builder remove(Text... children) {
+            this.children.removeAll(Arrays.asList(children));
+            return this;
+        }
+
+        @Override
+        public Text.Builder remove(Collection<? extends Text> children) {
+            this.children.removeAll(children);
+            return this;
+        }
+
+        @Override
+        public Text.Builder remove(Iterable<? extends Text> children) {
+            for (Text child : children) {
+                this.children.remove(child);
+            }
+            return this;
+        }
+
+        @Override
+        public Text.Builder remove(Iterator<? extends Text> children) {
+            while (children.hasNext()) {
+                this.children.remove(children.next());
+            }
+            return this;
+        }
+
+        @Override
+        public Text.Builder removeAll() {
+            this.children.clear();
+            return this;
+        }
+
+        @Override
+        public Text.Builder trim() {
+            Iterator<Text> front = this.children.iterator();
+            while (front.hasNext()) {
+                if (front.next().isEmpty()) {
+                    front.remove();
+                } else {
+                    break;
+                }
+            }
+            ListIterator<Text> back = this.children.listIterator(this.children.size());
+            while (back.hasPrevious()) {
+                if (back.previous().isEmpty()) {
+                    back.remove();
+                } else {
+                    break;
+                }
+            }
+            return this;
+        }
+
+        @Override
+        public abstract Text build();
+
+        @Override
+        public boolean equals(@Nullable Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof AbstractBuilder)) {
+                return false;
+            }
+
+            AbstractBuilder that = (AbstractBuilder) o;
+            return Objects.equal(this.format, that.format)
+                    && Objects.equal(this.clickAction, that.clickAction)
+                    && Objects.equal(this.hoverAction, that.hoverAction)
+                    && Objects.equal(this.shiftClickAction, that.shiftClickAction)
+                    && Objects.equal(this.children, that.children);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(this.format, this.clickAction, this.hoverAction, this.shiftClickAction, this.children);
+        }
+
+        MoreObjects.ToStringHelper toStringHelper() {
+            return MoreObjects.toStringHelper(this.getClass())
+                    .omitNullValues()
+                    .add("format", this.format.isEmpty() ? null : this.format)
+                    .add("children", this.children.isEmpty() ? null : this.children)
+                    .add("clickAction", this.clickAction)
+                    .add("hoverAction", this.hoverAction)
+                    .add("shiftClickAction", this.shiftClickAction);
+        }
+
+        @Override
+        public final String toString() {
+            return this.toStringHelper().toString();
+        }
+
+        @Override
+        public final Text toText() {
+            return this.build();
+        }
+
+    }
+}

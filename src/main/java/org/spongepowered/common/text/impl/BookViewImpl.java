@@ -107,8 +107,8 @@ public final class BookViewImpl implements BookView {
 
     public static final class Builder implements BookView.Builder {
 
-        Text title = Text.EMPTY;
-        Text author = Text.EMPTY;
+        Text title = Text.of();
+        Text author = Text.of();
         List<Text> pages = new ArrayList<>();
 
         @Override
@@ -204,8 +204,8 @@ public final class BookViewImpl implements BookView {
 
         @Override
         public BookView.Builder reset() {
-            this.title = Text.EMPTY;
-            this.author = Text.EMPTY;
+            this.title = Text.of();
+            this.author = Text.of();
             this.pages = new ArrayList<>();
             return this;
         }

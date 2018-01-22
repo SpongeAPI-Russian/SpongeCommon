@@ -26,12 +26,12 @@ package org.spongepowered.common.mixin.api.text;
 
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
-import org.spongepowered.api.text.LiteralText;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.common.text.impl.LiteralTextImpl;
 
-@Mixin(value = LiteralText.class, remap = false)
+@Mixin(value = LiteralTextImpl.class, remap = false)
 public abstract class MixinTextLiteral extends MixinText {
 
     @Shadow @Final protected String content;
