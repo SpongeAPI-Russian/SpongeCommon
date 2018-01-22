@@ -3,10 +3,8 @@ package org.spongepowered.common.text.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import org.spongepowered.api.scoreboard.Score;
-import org.spongepowered.api.text.ScoreText;
+import org.spongepowered.api.text.SelectorText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction;
 import org.spongepowered.api.text.action.HoverAction;
@@ -14,39 +12,32 @@ import org.spongepowered.api.text.action.ShiftClickAction;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextFormat;
 import org.spongepowered.api.text.format.TextStyle;
+import org.spongepowered.api.text.selector.Selector;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-public final class ScoreTextImpl extends TextImpl implements ScoreText {
+public class SelectorTextImpl extends TextImpl implements SelectorText {
 
-    final Score score;
-    final Optional<String> override;
+    final Selector selector;
 
-    ScoreTextImpl(Score score) {
-        this.score = checkNotNull(score, "score");
-        this.override = Optional.empty();
+    SelectorTextImpl(Selector selector) {
+        this.selector = checkNotNull(selector, "selector");
     }
 
-    ScoreTextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
+    SelectorTextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
             @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction,
-            Score score, @Nullable String override) {
+            Selector selector) {
         super(format, children, clickAction, hoverAction, shiftClickAction);
-        this.score = checkNotNull(score, "score");
-        this.override = Optional.ofNullable(override);
+        this.selector = checkNotNull(selector, "selector");
     }
 
     @Override
-    public Score getScore() {
-        return this.score;
-    }
-
-    @Override
-    public Optional<String> getOverride() {
-        return this.override;
+    public Selector getSelector() {
+        return this.selector;
     }
 
     @Override
@@ -59,76 +50,62 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ScoreTextImpl) || !super.equals(o)) {
+        if (!(o instanceof SelectorTextImpl) || !super.equals(o)) {
             return false;
         }
 
-        ScoreTextImpl that = (ScoreTextImpl) o;
-        return this.score.equals(that.score) && this.override.equals(that.override);
+        SelectorTextImpl that = (SelectorTextImpl) o;
+        return this.selector.equals(that.selector);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(super.hashCode(), this.score, this.override);
+        return Objects.hash(super.hashCode(), this.selector);
     }
 
     @Override
     MoreObjects.ToStringHelper toStringHelper() {
         return super.toStringHelper()
-                .addValue(this.score)
-                .add("override", this.override.orElse(null));
+                .addValue(this.selector);
     }
 
-    public static final class Builder extends TextImpl.AbstractBuilder implements ScoreText.Builder {
+    public static class Builder extends TextImpl.AbstractBuilder implements SelectorText.Builder {
 
-        private Score score;
-        @Nullable private String override;
+        private Selector selector;
 
         public Builder() {
+            selector(selector);
         }
 
         Builder(Text text) {
             super(text);
         }
 
-        Builder(ScoreText text) {
+        Builder(SelectorText text) {
             super(text);
-            this.score = text.getScore();
-            this.override = text.getOverride().orElse(null);
+            this.selector = text.getSelector();
         }
 
         @Override
-        public final Score getScore() {
-            return this.score;
+        public final Selector getSelector() {
+            return this.selector;
         }
 
         @Override
-        public ScoreText.Builder score(Score score) {
-            this.score = checkNotNull(score, "score");
+        public Builder selector(Selector selector) {
+            this.selector = checkNotNull(selector, "selector");
             return this;
         }
 
         @Override
-        public final Optional<String> getOverride() {
-            return Optional.ofNullable(this.override);
-        }
-
-        @Override
-        public ScoreText.Builder override(@Nullable String override) {
-            this.override = override;
-            return this;
-        }
-
-        @Override
-        public ScoreText build() {
-            return new ScoreTextImpl(
+        public SelectorText build() {
+            return new SelectorTextImpl(
                     this.format,
                     ImmutableList.copyOf(this.children),
                     this.clickAction,
                     this.hoverAction,
                     this.shiftClickAction,
-                    this.score,
-                    this.override);
+                    this.selector);
         }
 
         @Override
@@ -141,20 +118,19 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
             }
 
             Builder that = (Builder) o;
-            return Objects.equal(this.score, that.score)
-                    && Objects.equal(this.override, that.override);
+            return Objects.equals(this.selector, that.selector);
+
         }
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(super.hashCode(), this.score, this.override);
+            return Objects.hash(super.hashCode(), this.selector);
         }
 
         @Override
         MoreObjects.ToStringHelper toStringHelper() {
             return super.toStringHelper()
-                    .addValue(this.score)
-                    .add("override", this.override);
+                    .addValue(this.selector);
         }
 
         @Override
@@ -253,12 +229,12 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         }
 
         @Override
-        public Builder from(Text value) {
+        public Text.Builder from(Text value) {
             return new Builder(value);
         }
 
         @Override
-        public Builder reset() {
+        public Text.Builder reset() {
             return new Builder();
         }
     }

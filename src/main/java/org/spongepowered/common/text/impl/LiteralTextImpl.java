@@ -69,12 +69,6 @@ public final class LiteralTextImpl extends TextImpl implements LiteralText {
         return new Builder(this);
     }
 
-    /**
-     * Represents a {@link Text.Builder} creating immutable {@link LiteralText}
-     * instances.
-     *
-     * @see LiteralText
-     */
     public static final class Builder extends AbstractBuilder implements LiteralText.Builder {
 
         private String content;
