@@ -28,6 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.text.LiteralText;
+import org.spongepowered.api.text.ScoreText;
+import org.spongepowered.api.text.SelectorText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextFactory;
 import org.spongepowered.api.text.TextRepresentable;
@@ -49,7 +51,7 @@ public final class TextFactoryImpl implements TextFactory {
 
     @Override
     public Text empty() {
-        return LiteralText.EMPTY;
+        return LiteralTextImpl.EMPTY;
     }
 
     @Override
@@ -63,12 +65,22 @@ public final class TextFactoryImpl implements TextFactory {
     @Override
     public LiteralText literal(String content) {
         if (checkNotNull(content, "content").isEmpty()) {
-            return LiteralText.EMPTY;
+            return LiteralTextImpl.EMPTY;
         } else if (content.equals(TextImpl.NEW_LINE_STRING)) {
             return TextImpl.NEW_LINE;
         } else {
             return Text.builder(content).build();
         }
+    }
+
+    @Override
+    public ScoreText score(final Score score) {
+        return new ScoreTextImpl(score);
+    }
+
+    @Override
+    public SelectorText selector(final Selector selector) {
+        return new SelectorTextImpl(selector);
     }
 
     @Override
