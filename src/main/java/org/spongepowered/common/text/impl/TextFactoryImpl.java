@@ -24,6 +24,7 @@
  */
 package org.spongepowered.common.text.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.spongepowered.api.scoreboard.Score;
@@ -33,6 +34,7 @@ import org.spongepowered.api.text.SelectorText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextFactory;
 import org.spongepowered.api.text.TextRepresentable;
+import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.text.action.ClickAction;
 import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.ShiftClickAction;
@@ -252,5 +254,23 @@ public final class TextFactoryImpl implements TextFactory {
     @Override
     public TextFormat format(final TextColor color, final TextStyle style) {
         return new TextFormatImpl(color, style);
+    }
+
+    @Override
+    public TextTemplate emptyTemplate() {
+        return TextTemplateImpl.EMPTY;
+    }
+
+    @Override
+    public TextTemplate template(final String openArg, final String closeArg, final Object[] elements) {
+        checkNotNull(openArg, "open arg");
+        checkArgument(!openArg.isEmpty(), "open arg cannot be empty");
+        checkNotNull(closeArg, "close arg");
+        checkArgument(!closeArg.isEmpty(), "close arg cannot be empty");
+        checkNotNull(elements, "elements");
+        if (elements.length == 0) {
+            return this.emptyTemplate();
+        }
+        return new TextTemplateImpl(openArg, closeArg, elements);
     }
 }
