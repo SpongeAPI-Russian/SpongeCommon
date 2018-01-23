@@ -44,16 +44,18 @@ import org.spongepowered.api.text.format.TextFormat;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.text.selector.Selector;
+import org.spongepowered.api.text.serializer.FormattingCodeTextSerializer;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.common.text.format.TextFormatImpl;
+import org.spongepowered.common.text.serializer.SpongeFormattingCodeTextSerializer;
 
 import java.util.Iterator;
 
 public final class TextFactoryImpl implements TextFactory {
 
     @Override
-    public Text empty() {
+    public Text emptyText() {
         return LiteralTextImpl.EMPTY;
     }
 
@@ -272,5 +274,10 @@ public final class TextFactoryImpl implements TextFactory {
             return this.emptyTemplate();
         }
         return new TextTemplateImpl(openArg, closeArg, elements);
+    }
+
+    @Override
+    public FormattingCodeTextSerializer createFormattingCodeSerializer(final char legacyChar) {
+        return new SpongeFormattingCodeTextSerializer(legacyChar);
     }
 }

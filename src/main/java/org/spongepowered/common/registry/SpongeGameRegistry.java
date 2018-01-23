@@ -75,7 +75,6 @@ import org.spongepowered.api.text.TextTemplate;
 import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.common.text.serializer.config.BookViewDataBuilder;
 import org.spongepowered.common.text.serializer.config.TextConfigSerializer;
-import org.spongepowered.api.text.serializer.TextSerializerFactory;
 import org.spongepowered.api.text.translation.Translation;
 import org.spongepowered.api.util.ResettableBuilder;
 import org.spongepowered.api.util.Tuple;
@@ -98,7 +97,6 @@ import org.spongepowered.common.registry.type.scoreboard.DisplaySlotRegistryModu
 import org.spongepowered.common.registry.util.RegistryModuleLoader;
 import org.spongepowered.common.text.impl.TextFactoryImpl;
 import org.spongepowered.common.text.selector.SpongeSelectorFactory;
-import org.spongepowered.common.text.serializer.SpongeTextSerializerFactory;
 import org.spongepowered.common.text.serializer.config.TextTemplateConfigSerializer;
 import org.spongepowered.common.text.translation.SpongeTranslation;
 import org.spongepowered.common.util.LocaleCache;
@@ -504,12 +502,6 @@ public class SpongeGameRegistry implements GameRegistry {
     @Override
     public VillagerRegistry getVillagerRegistry() {
         return SpongeVillagerRegistry.getInstance();
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public TextSerializerFactory getTextSerializerFactory() {
-        return SpongeTextSerializerFactory.INSTANCE;
     }
 
     @SuppressWarnings("deprecation")
