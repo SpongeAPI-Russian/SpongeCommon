@@ -24,13 +24,13 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
 
     final Selector selector;
 
-    SelectorTextImpl(Selector selector) {
+    SelectorTextImpl(final Selector selector) {
         this.selector = checkNotNull(selector, "selector");
     }
 
-    SelectorTextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
-            @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction,
-            Selector selector) {
+    SelectorTextImpl(final TextFormat format, final ImmutableList<Text> children, @Nullable final ClickAction<?> clickAction,
+            @Nullable final HoverAction<?> hoverAction, @Nullable final ShiftClickAction<?> shiftClickAction,
+            final Selector selector) {
         super(format, children, clickAction, hoverAction, shiftClickAction);
         this.selector = checkNotNull(selector, "selector");
     }
@@ -46,7 +46,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }
@@ -54,7 +54,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
             return false;
         }
 
-        SelectorTextImpl that = (SelectorTextImpl) o;
+        final SelectorTextImpl that = (SelectorTextImpl) o;
         return this.selector.equals(that.selector);
     }
 
@@ -77,11 +77,11 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
             selector(selector);
         }
 
-        Builder(Text text) {
+        Builder(final Text text) {
             super(text);
         }
 
-        Builder(SelectorText text) {
+        Builder(final SelectorText text) {
             super(text);
             this.selector = text.getSelector();
         }
@@ -92,7 +92,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
         }
 
         @Override
-        public Builder selector(Selector selector) {
+        public Builder selector(final Selector selector) {
             this.selector = checkNotNull(selector, "selector");
             return this;
         }
@@ -109,7 +109,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
         }
 
         @Override
-        public boolean equals(@Nullable Object o) {
+        public boolean equals(@Nullable final Object o) {
             if (this == o) {
                 return true;
             }
@@ -117,7 +117,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
                 return false;
             }
 
-            Builder that = (Builder) o;
+            final Builder that = (Builder) o;
             return Objects.equals(this.selector, that.selector);
 
         }
@@ -134,92 +134,92 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
         }
 
         @Override
-        public Builder format(TextFormat format) {
+        public Builder format(final TextFormat format) {
             return (Builder) super.format(format);
         }
 
         @Override
-        public Builder color(TextColor color) {
+        public Builder color(final TextColor color) {
             return (Builder) super.color(color);
         }
 
         @Override
-        public Builder style(TextStyle... styles) {
+        public Builder style(final TextStyle... styles) {
             return (Builder) super.style(styles);
         }
 
         @Override
-        public Builder onClick(@Nullable ClickAction<?> clickAction) {
+        public Builder onClick(@Nullable final ClickAction<?> clickAction) {
             return (Builder) super.onClick(clickAction);
         }
 
         @Override
-        public Builder onHover(@Nullable HoverAction<?> hoverAction) {
+        public Builder onHover(@Nullable final HoverAction<?> hoverAction) {
             return (Builder) super.onHover(hoverAction);
         }
 
         @Override
-        public Builder onShiftClick(@Nullable ShiftClickAction<?> shiftClickAction) {
+        public Builder onShiftClick(@Nullable final ShiftClickAction<?> shiftClickAction) {
             return (Builder) super.onShiftClick(shiftClickAction);
         }
 
         @Override
-        public Builder append(Text... children) {
+        public Builder append(final Text... children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder append(Collection<? extends Text> children) {
+        public Builder append(final Collection<? extends Text> children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder append(Iterable<? extends Text> children) {
+        public Builder append(final Iterable<? extends Text> children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder append(Iterator<? extends Text> children) {
+        public Builder append(final Iterator<? extends Text> children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder insert(int pos, Text... children) {
+        public Builder insert(final int pos, final Text... children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder insert(int pos, Collection<? extends Text> children) {
+        public Builder insert(final int pos, final Collection<? extends Text> children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder insert(int pos, Iterable<? extends Text> children) {
+        public Builder insert(final int pos, final Iterable<? extends Text> children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder insert(int pos, Iterator<? extends Text> children) {
+        public Builder insert(final int pos, final Iterator<? extends Text> children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder remove(Text... children) {
+        public Builder remove(final Text... children) {
             return (Builder) super.remove(children);
         }
 
         @Override
-        public Builder remove(Collection<? extends Text> children) {
+        public Builder remove(final Collection<? extends Text> children) {
             return (Builder) super.remove(children);
         }
 
         @Override
-        public Builder remove(Iterable<? extends Text> children) {
+        public Builder remove(final Iterable<? extends Text> children) {
             return (Builder) super.remove(children);
         }
 
         @Override
-        public Builder remove(Iterator<? extends Text> children) {
+        public Builder remove(final Iterator<? extends Text> children) {
             return (Builder) super.remove(children);
         }
 
@@ -229,7 +229,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
         }
 
         @Override
-        public Text.Builder from(Text value) {
+        public Text.Builder from(final Text value) {
             return new Builder(value);
         }
 

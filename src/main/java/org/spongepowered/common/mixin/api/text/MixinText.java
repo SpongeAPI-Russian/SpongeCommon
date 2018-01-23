@@ -39,13 +39,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.common.interfaces.text.IMixinTextComponent;
 import org.spongepowered.common.interfaces.text.IMixinText;
-import org.spongepowered.common.text.action.SpongeClickAction;
-import org.spongepowered.common.text.action.SpongeHoverAction;
+import org.spongepowered.common.text.action.ClickTextActionImpl;
+import org.spongepowered.common.text.action.HoverTextActionImpl;
 import org.spongepowered.common.text.format.SpongeTextColor;
+import org.spongepowered.common.text.impl.TextImpl;
 
 import java.util.Optional;
 
-@Mixin(value = Text.class, remap = false)
+@Mixin(value = TextImpl.class, remap = false)
 public abstract class MixinText implements IMixinText {
 
     @Shadow @Final protected TextFormat format;
@@ -79,11 +80,11 @@ public abstract class MixinText implements IMixinText {
             }
 
             if (this.clickAction.isPresent()) {
-                style.setClickEvent(SpongeClickAction.getHandle(this.clickAction.get()));
+                style.setClickEvent(((ClickTextActionImpl) this.clickAction.get()).asEvent());
             }
 
             if (this.hoverAction.isPresent()) {
-                style.setHoverEvent(SpongeHoverAction.getHandle(this.hoverAction.get()));
+                style.setHoverEvent(((HoverTextActionImpl) this.hoverAction.get()).asEvent());
             }
 
             if (this.shiftClickAction.isPresent()) {

@@ -86,7 +86,7 @@ public abstract class TextImpl implements Text {
     final Iterable<Text> childrenIterable;
 
     TextImpl() {
-        this.format = TextFormat.NONE; // TODO
+        this.format = TextFormat.of(); // TODO
         this.children = ImmutableList.of();
         this.clickAction = Optional.empty();
         this.hoverAction = Optional.empty();
@@ -94,8 +94,8 @@ public abstract class TextImpl implements Text {
         this.childrenIterable = () -> Iterators.singletonIterator(this);
     }
 
-    TextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
-            @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction) {
+    TextImpl(final TextFormat format, final ImmutableList<Text> children, @Nullable final ClickAction<?> clickAction,
+            @Nullable final HoverAction<?> hoverAction, @Nullable final ShiftClickAction<?> shiftClickAction) {
         this.format = checkNotNull(format, "format");
         this.children = checkNotNull(children, "children");
         this.clickAction = Optional.ofNullable(clickAction);
@@ -163,7 +163,7 @@ public abstract class TextImpl implements Text {
     }
 
     @Override
-    public final Text concat(Text other) {
+    public final Text concat(final Text other) {
         return this.toBuilder().append(other).build();
     }
 
@@ -185,12 +185,12 @@ public abstract class TextImpl implements Text {
     }
 
     @Override
-    public int compareTo(Text o) {
+    public int compareTo(final Text o) {
         return PLAIN_COMPARATOR.compare(this, o);
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }
@@ -198,7 +198,7 @@ public abstract class TextImpl implements Text {
             return false;
         }
 
-        TextImpl that = (TextImpl) o;
+        final TextImpl that = (TextImpl) o;
         return this.format.equals(that.format)
                 && this.children.equals(that.children)
                 && this.clickAction.equals(that.clickAction)
@@ -233,7 +233,7 @@ public abstract class TextImpl implements Text {
 
     public abstract static class AbstractBuilder implements Text.Builder {
 
-        TextFormat format = TextFormat.NONE;
+        TextFormat format = TextFormat.of();
         List<Text> children = new ArrayList<>();
         @Nullable ClickAction<?> clickAction;
         @Nullable HoverAction<?> hoverAction;
@@ -251,7 +251,7 @@ public abstract class TextImpl implements Text {
          *
          * @param text The text to copy the values from
          */
-        AbstractBuilder(Text text) {
+        AbstractBuilder(final Text text) {
             this.format = text.getFormat();
             this.children = new ArrayList<>(text.getChildren());
             this.clickAction = text.getClickAction().orElse(null);
@@ -265,7 +265,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Text.Builder format(TextFormat format) {
+        public Text.Builder format(final TextFormat format) {
             this.format = checkNotNull(format, "format");
             return this;
         }
@@ -276,7 +276,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder color(TextColor color) {
+        public Builder color(final TextColor color) {
             this.format = this.format.color(color);
             return this;
         }
@@ -288,7 +288,7 @@ public abstract class TextImpl implements Text {
 
         @Override
         // TODO: Make sure this is the correct behaviour
-        public Builder style(TextStyle... styles) {
+        public Builder style(final TextStyle... styles) {
             this.format = this.format.style(this.format.getStyle().and(styles));
             return this;
         }
@@ -299,7 +299,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder onClick(@Nullable ClickAction<?> clickAction) {
+        public Builder onClick(@Nullable final ClickAction<?> clickAction) {
             this.clickAction = clickAction;
             return this;
         }
@@ -310,7 +310,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder onHover(@Nullable HoverAction<?> hoverAction) {
+        public Builder onHover(@Nullable final HoverAction<?> hoverAction) {
             this.hoverAction = hoverAction;
             return this;
         }
@@ -321,7 +321,7 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder onShiftClick(@Nullable ShiftClickAction<?> shiftClickAction) {
+        public Builder onShiftClick(@Nullable final ShiftClickAction<?> shiftClickAction) {
             this.shiftClickAction = shiftClickAction;
             return this;
         }
@@ -332,27 +332,27 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder append(Text... children) {
+        public Builder append(final Text... children) {
             Collections.addAll(this.children, children);
             return this;
         }
 
         @Override
-        public Builder append(Collection<? extends Text> children) {
+        public Builder append(final Collection<? extends Text> children) {
             this.children.addAll(children);
             return this;
         }
 
         @Override
-        public Builder append(Iterable<? extends Text> children) {
-            for (Text child : children) {
+        public Builder append(final Iterable<? extends Text> children) {
+            for (final Text child : children) {
                 this.children.add(child);
             }
             return this;
         }
 
         @Override
-        public Builder append(Iterator<? extends Text> children) {
+        public Builder append(final Iterator<? extends Text> children) {
             while (children.hasNext()) {
                 this.children.add(children.next());
             }
@@ -360,27 +360,27 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder insert(int pos, Text... children) {
+        public Builder insert(final int pos, final Text... children) {
             this.children.addAll(pos, Arrays.asList(children));
             return this;
         }
 
         @Override
-        public Builder insert(int pos, Collection<? extends Text> children) {
+        public Builder insert(final int pos, final Collection<? extends Text> children) {
             this.children.addAll(pos, children);
             return this;
         }
 
         @Override
-        public Builder insert(int pos, Iterable<? extends Text> children) {
-            for (Text child : children) {
+        public Builder insert(int pos, final Iterable<? extends Text> children) {
+            for (final Text child : children) {
                 this.children.add(pos++, child);
             }
             return this;
         }
 
         @Override
-        public Builder insert(int pos, Iterator<? extends Text> children) {
+        public Builder insert(int pos, final Iterator<? extends Text> children) {
             while (children.hasNext()) {
                 this.children.add(pos++, children.next());
             }
@@ -388,27 +388,27 @@ public abstract class TextImpl implements Text {
         }
 
         @Override
-        public Builder remove(Text... children) {
+        public Builder remove(final Text... children) {
             this.children.removeAll(Arrays.asList(children));
             return this;
         }
 
         @Override
-        public Builder remove(Collection<? extends Text> children) {
+        public Builder remove(final Collection<? extends Text> children) {
             this.children.removeAll(children);
             return this;
         }
 
         @Override
-        public Builder remove(Iterable<? extends Text> children) {
-            for (Text child : children) {
+        public Builder remove(final Iterable<? extends Text> children) {
+            for (final Text child : children) {
                 this.children.remove(child);
             }
             return this;
         }
 
         @Override
-        public Builder remove(Iterator<? extends Text> children) {
+        public Builder remove(final Iterator<? extends Text> children) {
             while (children.hasNext()) {
                 this.children.remove(children.next());
             }
@@ -423,7 +423,7 @@ public abstract class TextImpl implements Text {
 
         @Override
         public Builder trim() {
-            Iterator<Text> front = this.children.iterator();
+            final Iterator<Text> front = this.children.iterator();
             while (front.hasNext()) {
                 if (front.next().isEmpty()) {
                     front.remove();
@@ -431,7 +431,7 @@ public abstract class TextImpl implements Text {
                     break;
                 }
             }
-            ListIterator<Text> back = this.children.listIterator(this.children.size());
+            final ListIterator<Text> back = this.children.listIterator(this.children.size());
             while (back.hasPrevious()) {
                 if (back.previous().isEmpty()) {
                     back.remove();
@@ -446,7 +446,7 @@ public abstract class TextImpl implements Text {
         public abstract Text build();
 
         @Override
-        public boolean equals(@Nullable Object o) {
+        public boolean equals(@Nullable final Object o) {
             if (this == o) {
                 return true;
             }
@@ -454,7 +454,7 @@ public abstract class TextImpl implements Text {
                 return false;
             }
 
-            AbstractBuilder that = (AbstractBuilder) o;
+            final AbstractBuilder that = (AbstractBuilder) o;
             return Objects.equal(this.format, that.format)
                     && Objects.equal(this.clickAction, that.clickAction)
                     && Objects.equal(this.hoverAction, that.hoverAction)

@@ -26,14 +26,14 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
     final Score score;
     final Optional<String> override;
 
-    ScoreTextImpl(Score score) {
+    ScoreTextImpl(final Score score) {
         this.score = checkNotNull(score, "score");
         this.override = Optional.empty();
     }
 
-    ScoreTextImpl(TextFormat format, ImmutableList<Text> children, @Nullable ClickAction<?> clickAction,
-            @Nullable HoverAction<?> hoverAction, @Nullable ShiftClickAction<?> shiftClickAction,
-            Score score, @Nullable String override) {
+    ScoreTextImpl(final TextFormat format, final ImmutableList<Text> children, @Nullable final ClickAction<?> clickAction,
+            @Nullable final HoverAction<?> hoverAction, @Nullable final ShiftClickAction<?> shiftClickAction,
+            final Score score, @Nullable final String override) {
         super(format, children, clickAction, hoverAction, shiftClickAction);
         this.score = checkNotNull(score, "score");
         this.override = Optional.ofNullable(override);
@@ -55,7 +55,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }
@@ -63,7 +63,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
             return false;
         }
 
-        ScoreTextImpl that = (ScoreTextImpl) o;
+        final ScoreTextImpl that = (ScoreTextImpl) o;
         return this.score.equals(that.score) && this.override.equals(that.override);
     }
 
@@ -87,11 +87,11 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         public Builder() {
         }
 
-        Builder(Text text) {
+        Builder(final Text text) {
             super(text);
         }
 
-        Builder(ScoreText text) {
+        Builder(final ScoreText text) {
             super(text);
             this.score = text.getScore();
             this.override = text.getOverride().orElse(null);
@@ -103,7 +103,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         }
 
         @Override
-        public ScoreText.Builder score(Score score) {
+        public ScoreText.Builder score(final Score score) {
             this.score = checkNotNull(score, "score");
             return this;
         }
@@ -114,7 +114,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         }
 
         @Override
-        public ScoreText.Builder override(@Nullable String override) {
+        public ScoreText.Builder override(@Nullable final String override) {
             this.override = override;
             return this;
         }
@@ -132,7 +132,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         }
 
         @Override
-        public boolean equals(@Nullable Object o) {
+        public boolean equals(@Nullable final Object o) {
             if (this == o) {
                 return true;
             }
@@ -140,7 +140,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
                 return false;
             }
 
-            Builder that = (Builder) o;
+            final Builder that = (Builder) o;
             return Objects.equal(this.score, that.score)
                     && Objects.equal(this.override, that.override);
         }
@@ -158,92 +158,92 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         }
 
         @Override
-        public Builder format(TextFormat format) {
+        public Builder format(final TextFormat format) {
             return (Builder) super.format(format);
         }
 
         @Override
-        public Builder color(TextColor color) {
+        public Builder color(final TextColor color) {
             return (Builder) super.color(color);
         }
 
         @Override
-        public Builder style(TextStyle... styles) {
+        public Builder style(final TextStyle... styles) {
             return (Builder) super.style(styles);
         }
 
         @Override
-        public Builder onClick(@Nullable ClickAction<?> clickAction) {
+        public Builder onClick(@Nullable final ClickAction<?> clickAction) {
             return (Builder) super.onClick(clickAction);
         }
 
         @Override
-        public Builder onHover(@Nullable HoverAction<?> hoverAction) {
+        public Builder onHover(@Nullable final HoverAction<?> hoverAction) {
             return (Builder) super.onHover(hoverAction);
         }
 
         @Override
-        public Builder onShiftClick(@Nullable ShiftClickAction<?> shiftClickAction) {
+        public Builder onShiftClick(@Nullable final ShiftClickAction<?> shiftClickAction) {
             return (Builder) super.onShiftClick(shiftClickAction);
         }
 
         @Override
-        public Builder append(Text... children) {
+        public Builder append(final Text... children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder append(Collection<? extends Text> children) {
+        public Builder append(final Collection<? extends Text> children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder append(Iterable<? extends Text> children) {
+        public Builder append(final Iterable<? extends Text> children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder append(Iterator<? extends Text> children) {
+        public Builder append(final Iterator<? extends Text> children) {
             return (Builder) super.append(children);
         }
 
         @Override
-        public Builder insert(int pos, Text... children) {
+        public Builder insert(final int pos, final Text... children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder insert(int pos, Collection<? extends Text> children) {
+        public Builder insert(final int pos, final Collection<? extends Text> children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder insert(int pos, Iterable<? extends Text> children) {
+        public Builder insert(final int pos, final Iterable<? extends Text> children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder insert(int pos, Iterator<? extends Text> children) {
+        public Builder insert(final int pos, final Iterator<? extends Text> children) {
             return (Builder) super.insert(pos, children);
         }
 
         @Override
-        public Builder remove(Text... children) {
+        public Builder remove(final Text... children) {
             return (Builder) super.remove(children);
         }
 
         @Override
-        public Builder remove(Collection<? extends Text> children) {
+        public Builder remove(final Collection<? extends Text> children) {
             return (Builder) super.remove(children);
         }
 
         @Override
-        public Builder remove(Iterable<? extends Text> children) {
+        public Builder remove(final Iterable<? extends Text> children) {
             return (Builder) super.remove(children);
         }
 
         @Override
-        public Builder remove(Iterator<? extends Text> children) {
+        public Builder remove(final Iterator<? extends Text> children) {
             return (Builder) super.remove(children);
         }
 
@@ -253,7 +253,7 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
         }
 
         @Override
-        public Builder from(Text value) {
+        public Builder from(final Text value) {
             return new Builder(value);
         }
 

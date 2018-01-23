@@ -44,6 +44,7 @@ import org.spongepowered.api.text.format.TextStyles;
 import org.spongepowered.api.text.selector.Selector;
 import org.spongepowered.api.text.translation.Translatable;
 import org.spongepowered.api.text.translation.Translation;
+import org.spongepowered.common.text.format.TextFormatImpl;
 
 import java.util.Iterator;
 
@@ -55,7 +56,7 @@ public final class TextFactoryImpl implements TextFactory {
     }
 
     @Override
-    public LiteralText literal(char content) {
+    public LiteralText literal(final char content) {
         if (content == TextImpl.NEW_LINE_CHAR) {
             return TextImpl.NEW_LINE;
         }
@@ -63,7 +64,7 @@ public final class TextFactoryImpl implements TextFactory {
     }
 
     @Override
-    public LiteralText literal(String content) {
+    public LiteralText literal(final String content) {
         if (checkNotNull(content, "content").isEmpty()) {
             return LiteralTextImpl.EMPTY;
         } else if (content.equals(TextImpl.NEW_LINE_STRING)) {
@@ -84,20 +85,20 @@ public final class TextFactoryImpl implements TextFactory {
     }
 
     @Override
-    public Text of(Object... objects) {
+    public Text of(final Object... objects) {
         // Shortcut for lonely TextRepresentables
         if (objects.length == 1 && objects[0] instanceof TextRepresentable) {
             return ((TextRepresentable) objects[0]).toText();
         }
 
         final Text.Builder builder = Text.builder();
-        TextFormat format = TextFormat.NONE;
+        TextFormat format = TextFormat.of();
         HoverAction<?> hoverAction = null;
         ClickAction<?> clickAction = null;
         ShiftClickAction<?> shiftClickAction = null;
         boolean changedFormat = false;
 
-        for (Object obj : objects) {
+        for (final Object obj : objects) {
             // Text formatting + actions
             if (obj instanceof TextFormat) {
                 changedFormat = true;
@@ -123,7 +124,7 @@ public final class TextFactoryImpl implements TextFactory {
             } else if (obj instanceof TextRepresentable) {
                 // Special content
                 changedFormat = false;
-                Text.Builder childBuilder = ((TextRepresentable) obj).toText().toBuilder();
+                final Text.Builder childBuilder = ((TextRepresentable) obj).toText().toBuilder();
 
                 // Merge format (existing format has priority)
                 childBuilder.format(format.merge(childBuilder.getFormat()));
@@ -144,7 +145,7 @@ public final class TextFactoryImpl implements TextFactory {
             } else {
                 // Simple content
                 changedFormat = false;
-                Text.Builder childBuilder;
+                final Text.Builder childBuilder;
 
                 if (obj instanceof String) {
                     childBuilder = Text.builder((String) obj);
@@ -206,9 +207,9 @@ public final class TextFactoryImpl implements TextFactory {
             case 1:
                 return texts[0];
             default:
-                Text.Builder builder = Text.builder();
+                final Text.Builder builder = Text.builder();
                 boolean appendSeparator = false;
-                for (Text text : texts) {
+                for (final Text text : texts) {
                     if (appendSeparator) {
                         builder.append(separator);
                     } else {
@@ -228,12 +229,12 @@ public final class TextFactoryImpl implements TextFactory {
             return LiteralTextImpl.EMPTY;
         }
 
-        Text first = texts.next();
+        final Text first = texts.next();
         if (!texts.hasNext()) {
             return first;
         }
 
-        Text.Builder builder = Text.builder().append(first);
+        final Text.Builder builder = Text.builder().append(first);
         do {
             builder.append(separator);
             builder.append(texts.next());
@@ -241,5 +242,15 @@ public final class TextFactoryImpl implements TextFactory {
         while (texts.hasNext());
 
         return builder.build();
+    }
+
+    @Override
+    public TextFormat emptyFormat() {
+        return TextFormatImpl.NONE;
+    }
+
+    @Override
+    public TextFormat format(final TextColor color, final TextStyle style) {
+        return new TextFormatImpl(color, style);
     }
 }

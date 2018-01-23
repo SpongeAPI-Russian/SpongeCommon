@@ -46,7 +46,7 @@ public final class BookViewImpl implements BookView {
     final Text author;
     final ImmutableList<Text> pages;
 
-    BookViewImpl(Text title, Text author, ImmutableList<Text> pages) {
+    BookViewImpl(final Text title, final Text author, final ImmutableList<Text> pages) {
         this.title = title;
         this.pages = pages;
         this.author = author;
@@ -74,7 +74,7 @@ public final class BookViewImpl implements BookView {
 
     @Override
     public DataContainer toContainer() {
-        List<DataContainer> pages = this.pages.stream().map(Text::toContainer).collect(Collectors.toList());
+        final List<DataContainer> pages = this.pages.stream().map(Text::toContainer).collect(Collectors.toList());
         return DataContainer.createNew()
                 .set(Queries.CONTENT_VERSION, this.getContentVersion())
                 .set(Queries.TEXT_TITLE, this.title.toContainer())
@@ -96,7 +96,7 @@ public final class BookViewImpl implements BookView {
         if (!(other instanceof BookViewImpl)) {
             return false;
         }
-        BookViewImpl that = (BookViewImpl) other;
+        final BookViewImpl that = (BookViewImpl) other;
         return this.title.equals(that.title) && this.author.equals(that.author) && this.pages.equals(that.pages);
     }
 
@@ -112,73 +112,73 @@ public final class BookViewImpl implements BookView {
         List<Text> pages = new ArrayList<>();
 
         @Override
-        public BookView.Builder title(Text title) {
+        public BookView.Builder title(final Text title) {
             this.title = checkNotNull(title, "title");
             return this;
         }
 
         @Override
-        public BookView.Builder author(Text author) {
+        public BookView.Builder author(final Text author) {
             this.author = checkNotNull(author, "author");
             return this;
         }
 
         @Override
-        public BookView.Builder addPage(Text page) {
+        public BookView.Builder addPage(final Text page) {
             this.pages.add(checkNotNull(page, "page"));
             return this;
         }
 
         @Override
-        public BookView.Builder addPages(Collection<Text> pages) {
+        public BookView.Builder addPages(final Collection<Text> pages) {
             this.pages.addAll(checkNotNull(pages, "pages"));
             return this;
         }
 
         @Override
-        public BookView.Builder addPages(Text... pages) {
+        public BookView.Builder addPages(final Text... pages) {
             this.addPages(Arrays.asList(checkNotNull(pages, "pages")));
             return this;
         }
 
         @Override
-        public BookView.Builder insertPage(int i, Text page) {
+        public BookView.Builder insertPage(final int i, final Text page) {
             this.pages.add(i, checkNotNull(page, "page"));
             return this;
         }
 
         @Override
-        public BookView.Builder insertPages(int i, Collection<Text> pages) {
+        public BookView.Builder insertPages(final int i, final Collection<Text> pages) {
             this.pages.addAll(i, checkNotNull(pages, "pages"));
             return this;
         }
 
         @Override
-        public BookView.Builder insertPages(int i, Text... pages) {
+        public BookView.Builder insertPages(final int i, final Text... pages) {
             this.insertPages(i, Arrays.asList(checkNotNull(pages, "pages")));
             return this;
         }
 
         @Override
-        public BookView.Builder removePage(Text page) {
+        public BookView.Builder removePage(final Text page) {
             this.pages.remove(checkNotNull(page, "page"));
             return this;
         }
 
         @Override
-        public BookView.Builder removePage(int i) {
+        public BookView.Builder removePage(final int i) {
             this.pages.remove(i);
             return this;
         }
 
         @Override
-        public BookView.Builder removePages(Collection<Text> pages) {
+        public BookView.Builder removePages(final Collection<Text> pages) {
             this.pages.removeAll(checkNotNull(pages, "pages"));
             return this;
         }
 
         @Override
-        public BookView.Builder removePages(Text... pages) {
+        public BookView.Builder removePages(final Text... pages) {
             this.removePages(Arrays.asList(checkNotNull(pages, "pages")));
             return this;
         }
@@ -195,7 +195,7 @@ public final class BookViewImpl implements BookView {
         }
 
         @Override
-        public BookView.Builder from(BookView value) {
+        public BookView.Builder from(final BookView value) {
             this.title = value.getTitle();
             this.author = value.getAuthor();
             this.pages = value.getPages();

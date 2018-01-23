@@ -22,52 +22,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.spongepowered.common.text.impl;
+package org.spongepowered.common.text.action;
 
-import org.spongepowered.api.text.Text;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import com.google.common.base.MoreObjects;
+import org.spongepowered.api.text.action.TextAction;
 
 import javax.annotation.Nullable;
 
-/**
- * Represents a recursive {@link Iterator} for {@link Text} including the text
- * itself as well as all children texts.
- */
-final class TextIterator implements Iterator<Text> {
+public abstract class TextActionImpl<R> implements TextAction<R> {
 
-    private final TextImpl text;
-    @Nullable private Iterator<Text> children;
-    @Nullable private Iterator<Text> currentChildIterator;
+    protected final R result;
 
-    /**
-     * Constructs a new {@link TextIterator} for the specified {@link Text}.
-     *
-     * @param text The root text for the iterator
-     */
-    TextIterator(final TextImpl text) {
-        this.text = text;
+    protected TextActionImpl(final R result) {
+        this.result = checkNotNull(result, "result");
     }
 
     @Override
-    public boolean hasNext() {
-        return this.children == null || (this.currentChildIterator != null && this.currentChildIterator.hasNext()) || this.children.hasNext();
+    public R getResult() {
+        return this.result;
     }
 
     @Override
-    public Text next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
+    public boolean equals(@Nullable final Object o) {
+        if (this == o) {
+            return true;
         }
-        if (this.children == null) {
-            this.children = this.text.children.iterator();
-            return this.text;
-        } else if (this.currentChildIterator == null || !this.currentChildIterator.hasNext()) {
-            this.currentChildIterator = ((TextImpl) this.children.next()).childrenIterable.iterator();
+        if (o == null || this.getClass() != o.getClass()) {
+            return false;
         }
 
-        return this.currentChildIterator.next();
+        final TextActionImpl<?> that = (TextActionImpl<?>) o;
+        return this.result.equals(that.result);
     }
 
+    @Override
+    public int hashCode() {
+        return this.result.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .addValue(this.result)
+                .toString();
+    }
 }
