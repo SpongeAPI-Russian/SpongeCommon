@@ -63,7 +63,7 @@ public class TileEntitySignDataProcessor
         final ITextComponent[] rawLines = sign.signText;
         final List<Text> signLines = Lists.newArrayListWithExpectedSize(4);
         for (int i = 0; i < rawLines.length; i++) {
-            signLines.add(i, rawLines[i] == null ? Text.EMPTY : SpongeTexts.toText(rawLines[i]));
+            signLines.add(i, rawLines[i] == null ? Text.of() : SpongeTexts.toText(rawLines[i]));
         }
         return Optional.of(signLines);
 
@@ -72,7 +72,7 @@ public class TileEntitySignDataProcessor
     @Override
     protected boolean set(TileEntitySign sign, List<Text> lines) {
         for (int i = 0; i < sign.signText.length; i++) {
-            Text line = lines.size() > i ? lines.get(i) : Text.EMPTY;
+            Text line = lines.size() > i ? lines.get(i) : Text.of();
             if (line == null) {
                 throw new IllegalArgumentException("A null line was given at index " + i);
             }

@@ -56,10 +56,6 @@ import javax.annotation.Nullable;
 
 public abstract class TextImpl implements Text {
 
-    /**
-     * The empty, unformatted {@link Text} instance.
-     */
-    public static final Text EMPTY = LiteralTextImpl.EMPTY;
     static final char NEW_LINE_CHAR = '\n';
     static final String NEW_LINE_STRING = "\n";
 
@@ -146,7 +142,7 @@ public abstract class TextImpl implements Text {
 
     @Override
     public final boolean isEmpty() {
-        return this == EMPTY;
+        return this == LiteralTextImpl.EMPTY;
     }
 
     @Override

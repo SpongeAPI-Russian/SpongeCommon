@@ -49,7 +49,7 @@ public final class TranslatableTextImpl extends TextImpl implements Translatable
     final Translation translation;
     final ImmutableList<Object> arguments;
 
-    TranslatableTextImpl(final Translation translation, final ImmutableList<Object> arguments) {
+    public TranslatableTextImpl(final Translation translation, final ImmutableList<Object> arguments) {
         this.translation = checkNotNull(translation, "translation");
         this.arguments = checkNotNull(arguments, "arguments");
     }

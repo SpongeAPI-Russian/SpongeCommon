@@ -229,7 +229,7 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
         }
 
         @Override
-        public Text.Builder from(final Text value) {
+        public Builder from(final Text value) {
             return new Builder(value);
         }
 

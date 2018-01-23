@@ -45,7 +45,14 @@ import javax.annotation.Nullable;
 
 public final class LiteralTextImpl extends TextImpl implements LiteralText {
 
+    /**
+     * The empty, unformatted {@link Text} instance.
+     */
     static final LiteralText EMPTY = new LiteralTextImpl("");
+    /**
+     * An unformatted {@link Text} that will start a new line (if supported).
+     */
+    static final LiteralText NEW_LINE = new LiteralTextImpl(NEW_LINE_STRING);
 
     final String content;
 
