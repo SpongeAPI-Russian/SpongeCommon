@@ -57,7 +57,7 @@ public final class JsonTextSerializer implements TextSerializer {
         try {
             ITextComponent component = ITextComponent.Serializer.jsonToComponent(input);
             if (component == null) {
-                return Text.of();
+                return Text.empty();
             }
 
             return ((IMixinTextComponent) component).toText();

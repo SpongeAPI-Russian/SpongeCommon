@@ -123,7 +123,7 @@ public class SpongeDisplayInfoBuilder implements DisplayInfo.Builder {
     @Override
     public DisplayInfo.Builder reset() {
         this.icon = null;
-        this.description = Text.of();
+        this.description = Text.empty();
         this.advancementType = AdvancementTypes.TASK;
         this.announceToChat = true;
         this.hidden = false;

@@ -354,7 +354,7 @@ public final class SpongeImplHooks {
     }
 
     public static Text getAdditionalCommandDescriptions() {
-        return Text.of();
+        return Text.empty();
     }
 
     public static void registerAdditionalCommands(ChildCommandElementExecutor flagChildren, ChildCommandElementExecutor nonFlagChildren) {
