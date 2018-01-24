@@ -128,6 +128,7 @@ import org.spongepowered.api.text.format.TextColor;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.selector.SelectorType;
 import org.spongepowered.api.text.serializer.TextSerializer;
+import org.spongepowered.api.text.title.Title;
 import org.spongepowered.api.util.ban.Ban;
 import org.spongepowered.api.util.ban.BanType;
 import org.spongepowered.api.util.rotation.Rotation;
@@ -253,6 +254,7 @@ import org.spongepowered.common.text.impl.BookViewImpl;
 import org.spongepowered.common.text.impl.LiteralTextImpl;
 import org.spongepowered.common.text.impl.ScoreTextImpl;
 import org.spongepowered.common.text.impl.SelectorTextImpl;
+import org.spongepowered.common.text.impl.TitleImpl;
 import org.spongepowered.common.text.impl.TranslatableTextImpl;
 import org.spongepowered.common.world.SpongeExplosionBuilder;
 import org.spongepowered.common.world.SpongeLocatableBlockBuilder;
@@ -314,6 +316,7 @@ public final class CommonModuleRegistry {
             .registerBuilderSupplier(HoverAction.ShowEntity.Builder.class, HoverTextActionImpl.ShowEntityImpl.Builder::new)
             .registerBuilderSupplier(HoverAction.ShowEntity.Ref.Builder.class, HoverTextActionImpl.ShowEntityImpl.Ref.Builder::new)
             .registerBuilderSupplier(ShiftClickAction.InsertText.Builder.class, ShiftClickTextActionImpl.InsertTextImpl.Builder::new)
+            .registerBuilderSupplier(Title.Builder.class, TitleImpl.BuilderImpl::new)
             .registerBuilderSupplier(BookView.Builder.class, BookViewImpl.Builder::new)
             .registerBuilderSupplier(ItemStack.Builder.class, SpongeItemStackBuilder::new)
             .registerBuilderSupplier(TradeOffer.Builder.class, SpongeTradeOfferBuilder::new)
