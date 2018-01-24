@@ -27,16 +27,11 @@ package org.spongepowered.common.text.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.collect.ImmutableList;
 import org.spongepowered.api.scoreboard.Score;
-import org.spongepowered.api.text.LiteralText;
-import org.spongepowered.api.text.ScoreText;
-import org.spongepowered.api.text.SelectorText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TextFactory;
 import org.spongepowered.api.text.TextRepresentable;
 import org.spongepowered.api.text.TextTemplate;
-import org.spongepowered.api.text.TranslatableText;
 import org.spongepowered.api.text.action.ClickAction;
 import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.ShiftClickAction;
@@ -55,50 +50,6 @@ import org.spongepowered.common.text.serializer.SpongeFormattingCodeTextSerializ
 import java.util.Iterator;
 
 public final class TextFactoryImpl implements TextFactory {
-
-    @Override
-    public Text emptyText() {
-        return LiteralTextImpl.EMPTY;
-    }
-
-    @Override
-    public Text newLine() {
-        return LiteralTextImpl.NEW_LINE;
-    }
-
-    @Override
-    public LiteralText literal(final char content) {
-        if (content == TextImpl.NEW_LINE_CHAR) {
-            return LiteralTextImpl.NEW_LINE;
-        }
-        return Text.builder(String.valueOf(content)).build();
-    }
-
-    @Override
-    public LiteralText literal(final String content) {
-        if (checkNotNull(content, "content").isEmpty()) {
-            return LiteralTextImpl.EMPTY;
-        } else if (content.equals(TextImpl.NEW_LINE_STRING)) {
-            return LiteralTextImpl.NEW_LINE;
-        } else {
-            return Text.builder(content).build();
-        }
-    }
-
-    @Override
-    public TranslatableText translatable(final Translation translation, final Object... args) {
-        return new TranslatableTextImpl(translation, ImmutableList.copyOf(args));
-    }
-
-    @Override
-    public ScoreText score(final Score score) {
-        return new ScoreTextImpl(score);
-    }
-
-    @Override
-    public SelectorText selector(final Selector selector) {
-        return new SelectorTextImpl(selector);
-    }
 
     @Override
     public Text of(final Object... objects) {

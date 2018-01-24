@@ -28,6 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import org.spongepowered.api.text.LiteralText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction;
@@ -44,15 +46,17 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 
 public final class LiteralTextImpl extends TextImpl implements LiteralText {
+    public static final char NEW_LINE_CHAR = '\n';
+    public static final String NEW_LINE_STRING = "\n";
 
     /**
      * The empty, unformatted {@link Text} instance.
      */
-    static final LiteralText EMPTY = new LiteralTextImpl("");
+    public static final LiteralText EMPTY = new LiteralTextImpl("");
     /**
      * An unformatted {@link Text} that will start a new line (if supported).
      */
-    static final LiteralText NEW_LINE = new LiteralTextImpl(NEW_LINE_STRING);
+    public static final LiteralText NEW_LINE = new LiteralTextImpl(NEW_LINE_STRING);
 
     final String content;
 
@@ -74,6 +78,35 @@ public final class LiteralTextImpl extends TextImpl implements LiteralText {
     @Override
     public Builder toBuilder() {
         return new Builder(this);
+    }
+
+    @Override
+    protected ITextComponent createComponent() {
+        return new TextComponentString(this.content);
+    }
+
+    @Override
+    public boolean equals(@Nullable final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SelectorTextImpl) || !super.equals(o)) {
+            return false;
+        }
+
+        final LiteralTextImpl that = (LiteralTextImpl) o;
+        return this.content.equals(that.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), this.content);
+    }
+
+    @Override
+    MoreObjects.ToStringHelper toStringHelper() {
+        return super.toStringHelper()
+                .addValue(this.content);
     }
 
     public static final class Builder extends AbstractBuilder implements LiteralText.Builder {

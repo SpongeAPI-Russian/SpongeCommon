@@ -28,6 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.TranslatableText;
 import org.spongepowered.api.text.action.ClickAction;
@@ -75,6 +77,24 @@ public final class TranslatableTextImpl extends TextImpl implements Translatable
     @Override
     public Builder toBuilder() {
         return new Builder(this);
+    }
+
+    @Override
+    protected ITextComponent createComponent() {
+        return new TextComponentTranslation(this.translation.getId(), unwrapArguments(this.arguments));
+    }
+
+    private static Object[] unwrapArguments(final ImmutableList<Object> args) {
+        final Object[] result = new Object[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            final Object arg = args.get(i);
+            if (arg instanceof TextImpl) {
+                result[i] = ((TextImpl) arg).asComponentCopy();
+            } else {
+                result[i] = arg;
+            }
+        }
+        return result;
     }
 
     @Override

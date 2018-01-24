@@ -64,21 +64,21 @@ public final class TextTemplateImpl implements TextTemplate {
     final String openArg;
     final String closeArg;
 
-    TextTemplateImpl(String openArg, String closeArg, Object[] elements) {
+    TextTemplateImpl(final String openArg, final String closeArg, final Object[] elements) {
         this.openArg = openArg;
         this.closeArg = closeArg;
 
         // collect elements
-        ImmutableList.Builder<Object> elementList = ImmutableList.builder();
-        Map<String, ArgImpl> argumentMap = new HashMap<>();
+        final ImmutableList.Builder<Object> elementList = ImmutableList.builder();
+        final Map<String, ArgImpl> argumentMap = new HashMap<>();
         for (Object element : elements) {
             if (element instanceof ArgImpl.BuilderImpl) {
                 element = ((ArgImpl.BuilderImpl) element).build();
             }
             if (element instanceof ArgImpl) {
                 // check for non-equal duplicate argument
-                ArgImpl newArg = new ArgImpl((ArgImpl) element, this.openArg, this.closeArg);
-                ArgImpl oldArg = argumentMap.get(newArg.name);
+                final ArgImpl newArg = new ArgImpl((ArgImpl) element, this.openArg, this.closeArg);
+                final ArgImpl oldArg = argumentMap.get(newArg.name);
                 if (oldArg != null && !oldArg.equals(newArg)) {
                     throw new TextTemplateArgumentException("Tried to supply an unequal argument with a duplicate name \""
                             + newArg.name + "\" to TextTemplate.");
@@ -93,7 +93,7 @@ public final class TextTemplateImpl implements TextTemplate {
 
         // build text representation
         Text.Builder builder = null;
-        for (Object element : this.elements) {
+        for (final Object element : this.elements) {
             builder = this.apply(element, builder);
         }
         this.text = Optional.ofNullable(builder).orElse(Text.builder()).build();
@@ -120,8 +120,8 @@ public final class TextTemplateImpl implements TextTemplate {
     }
 
     @Override
-    public TextTemplate concat(TextTemplate other) {
-        List<Object> elements = new ArrayList<>(this.elements);
+    public TextTemplate concat(final TextTemplate other) {
+        final List<Object> elements = new ArrayList<>(this.elements);
         elements.addAll(other.getElements());
         return new TextTemplateImpl(this.openArg, this.closeArg, elements.toArray(new Object[elements.size()]));
     }
@@ -132,24 +132,24 @@ public final class TextTemplateImpl implements TextTemplate {
     }
 
     @Override
-    public Text.Builder apply(Map<String, ?> params) {
+    public Text.Builder apply(final Map<String, ?> params) {
         return this.apply(null, params);
     }
 
-    private Text.Builder apply(@Nullable Text.Builder result, Map<String, ?> params) {
+    private Text.Builder apply(@Nullable Text.Builder result, final Map<String, ?> params) {
         checkNotNull(params, "params");
-        for (Object element : this.elements) {
+        for (final Object element : this.elements) {
             result = this.apply(element, result, params);
         }
         return Optional.ofNullable(result).orElse(Text.builder());
     }
 
     @Nullable
-    private Text.Builder apply(Object element, @Nullable Text.Builder builder, Map<String, ?> params) {
+    private Text.Builder apply(final Object element, @Nullable Text.Builder builder, final Map<String, ?> params) {
         // Note: The builder is initialized as null to avoid unnecessary Text nesting
         if (element instanceof ArgImpl) {
-            ArgImpl arg = (ArgImpl) element;
-            Object param = params.get(arg.name);
+            final ArgImpl arg = (ArgImpl) element;
+            final Object param = params.get(arg.name);
             if (param == null) {
                 arg.checkOptional();
                 if (arg.defaultValue != null) {
@@ -164,9 +164,9 @@ public final class TextTemplateImpl implements TextTemplate {
         return builder;
     }
 
-    private Text.Builder apply(Object element, @Nullable Text.Builder builder) {
+    private Text.Builder apply(final Object element, @Nullable Text.Builder builder) {
         if (element instanceof Text) {
-            Text text = (Text) element;
+            final Text text = (Text) element;
             if (builder == null) {
                 builder = text.toBuilder();
             } else {
@@ -178,7 +178,7 @@ public final class TextTemplateImpl implements TextTemplate {
             }
             ((TextElement) element).applyTo(builder);
         } else {
-            String str = element.toString();
+            final String str = element.toString();
             if (builder == null) {
                 builder = Text.builder(str);
             } else {
@@ -188,12 +188,12 @@ public final class TextTemplateImpl implements TextTemplate {
         return builder;
     }
 
-    private Text.Builder applyArg(Object param, ArgImpl arg, @Nullable Text.Builder builder) {
+    private Text.Builder applyArg(final Object param, final ArgImpl arg, @Nullable Text.Builder builder) {
         if (builder == null) {
             builder = Text.builder();
         }
         // wrap the parameter in the argument format
-        Text.Builder wrapper = Text.builder().format(arg.format);
+        final Text.Builder wrapper = Text.builder().format(arg.format);
         this.apply(param, wrapper);
         builder.append(wrapper.build());
         return builder;
@@ -226,11 +226,11 @@ public final class TextTemplateImpl implements TextTemplate {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof TextTemplateImpl)) {
             return false;
         }
-        TextTemplateImpl that = (TextTemplateImpl) obj;
+        final TextTemplateImpl that = (TextTemplateImpl) obj;
         return that.elements.equals(this.elements)
                 && that.openArg.equals(this.openArg)
                 && that.closeArg.equals(this.closeArg);
@@ -246,7 +246,7 @@ public final class TextTemplateImpl implements TextTemplate {
         final String openArg;
         final String closeArg;
 
-        ArgImpl(String name, boolean optional, @Nullable Text defaultValue, TextFormat format, String openArg, String closeArg) {
+        ArgImpl(final String name, final boolean optional, @Nullable final Text defaultValue, final TextFormat format, final String openArg, final String closeArg) {
             this.name = name;
             this.optional = optional;
             this.defaultValue = defaultValue;
@@ -255,11 +255,11 @@ public final class TextTemplateImpl implements TextTemplate {
             this.closeArg = closeArg;
         }
 
-        ArgImpl(String name, boolean optional, @Nullable Text defaultValue, TextFormat format) {
+        ArgImpl(final String name, final boolean optional, @Nullable final Text defaultValue, final TextFormat format) {
             this(name, optional, defaultValue, format, DEFAULT_OPEN_ARG, DEFAULT_CLOSE_ARG);
         }
 
-        ArgImpl(ArgImpl arg, String openArg, String closeArg) {
+        ArgImpl(final ArgImpl arg, final String openArg, final String closeArg) {
             this(arg.name, arg.optional, arg.defaultValue, arg.format, openArg, closeArg);
         }
 
@@ -323,11 +323,11 @@ public final class TextTemplateImpl implements TextTemplate {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (!(obj instanceof ArgImpl)) {
                 return false;
             }
-            ArgImpl that = (ArgImpl) obj;
+            final ArgImpl that = (ArgImpl) obj;
             return that.name.equals(this.name)
                     && that.optional == this.optional
                     && (that.defaultValue != null ? that.defaultValue.equals(this.defaultValue) : this.defaultValue == null)
@@ -343,37 +343,37 @@ public final class TextTemplateImpl implements TextTemplate {
             TextFormat format = TextFormat.of();
 
             @Override
-            public BuilderImpl name(String name) {
+            public BuilderImpl name(final String name) {
                 this.name = name;
                 return this;
             }
 
             @Override
-            public BuilderImpl optional(boolean optional) {
+            public BuilderImpl optional(final boolean optional) {
                 this.optional = optional;
                 return this;
             }
 
             @Override
-            public BuilderImpl defaultValue(Text defaultValue) {
+            public BuilderImpl defaultValue(final Text defaultValue) {
                 this.defaultValue = defaultValue;
                 return this;
             }
 
             @Override
-            public BuilderImpl format(TextFormat format) {
+            public BuilderImpl format(final TextFormat format) {
                 this.format = format;
                 return this;
             }
 
             @Override
-            public BuilderImpl color(TextColor color) {
+            public BuilderImpl color(final TextColor color) {
                 this.format = this.format.color(color);
                 return this;
             }
 
             @Override
-            public BuilderImpl style(TextStyle style) {
+            public BuilderImpl style(final TextStyle style) {
                 this.format = this.format.style(style);
                 return this;
             }
@@ -395,7 +395,7 @@ public final class TextTemplateImpl implements TextTemplate {
             }
 
             @Override
-            public Arg.Builder from(Arg value) {
+            public Arg.Builder from(final Arg value) {
                 this.name = value.getName();
                 this.optional = value.isOptional();
                 this.defaultValue = value.getDefaultValue().orElse(null);

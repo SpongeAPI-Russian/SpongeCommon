@@ -28,6 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentSelector;
 import org.spongepowered.api.text.SelectorText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction;
@@ -67,6 +69,11 @@ public class SelectorTextImpl extends TextImpl implements SelectorText {
     @Override
     public Builder toBuilder() {
         return new Builder(this);
+    }
+
+    @Override
+    protected ITextComponent createComponent() {
+        return new TextComponentSelector(this.selector.toPlain());
     }
 
     @Override

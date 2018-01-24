@@ -30,17 +30,23 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.Queries;
-import org.spongepowered.api.text.LiteralText;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.action.ClickAction;
 import org.spongepowered.api.text.action.HoverAction;
 import org.spongepowered.api.text.action.ShiftClickAction;
 import org.spongepowered.api.text.format.TextColor;
+import org.spongepowered.api.text.format.TextColors;
 import org.spongepowered.api.text.format.TextFormat;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.api.text.serializer.TextSerializers;
+import org.spongepowered.common.interfaces.text.IMixinTextComponent;
+import org.spongepowered.common.text.action.ClickTextActionImpl;
+import org.spongepowered.common.text.action.HoverTextActionImpl;
+import org.spongepowered.common.text.format.SpongeTextColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,14 +61,6 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public abstract class TextImpl implements Text {
-
-    static final char NEW_LINE_CHAR = '\n';
-    static final String NEW_LINE_STRING = "\n";
-
-    /**
-     * An unformatted {@link Text} that will start a new line (if supported).
-     */
-    public static final LiteralText NEW_LINE = new LiteralTextImpl(NEW_LINE_STRING);
 
     /**
      * A {@link Comparator} for texts that compares the plain text of two text
@@ -80,6 +78,9 @@ public abstract class TextImpl implements Text {
      * as well as all children text and their children.
      */
     final Iterable<Text> childrenIterable;
+
+    @Nullable private ITextComponent component;
+    @Nullable private String json;
 
     TextImpl() {
         this.format = TextFormat.of(); // TODO
@@ -166,6 +167,54 @@ public abstract class TextImpl implements Text {
     @Override
     public final Text trim() {
         return this.toBuilder().trim().build();
+    }
+
+    protected abstract ITextComponent createComponent();
+
+    private ITextComponent asComponent() {
+        if (this.component == null) {
+            this.component = this.createComponent();
+
+            final Style style = this.component.getStyle();
+
+            if (this.format.getColor() != TextColors.NONE) {
+                style.setColor(((SpongeTextColor) this.format.getColor()).getHandle());
+            }
+
+            if (!this.format.getStyle().isEmpty()) {
+                style.setBold(this.format.getStyle().isBold().orElse(null));
+                style.setItalic(this.format.getStyle().isItalic().orElse(null));
+                style.setUnderlined(this.format.getStyle().hasUnderline().orElse(null));
+                style.setStrikethrough(this.format.getStyle().hasStrikethrough().orElse(null));
+                style.setObfuscated(this.format.getStyle().isObfuscated().orElse(null));
+            }
+
+            this.clickAction.ifPresent(action -> style.setClickEvent(((ClickTextActionImpl) action).asEvent()));
+            this.hoverAction.ifPresent(action -> style.setHoverEvent(((HoverTextActionImpl) action).asEvent()));
+            this.shiftClickAction.ifPresent(action -> style.setInsertion(((ShiftClickAction.InsertText) action).getResult()));
+
+            for (final Text child : this.children) {
+                this.component.appendSibling(((TextImpl) child).asComponentCopy());
+            }
+        }
+
+        return this.component;
+    }
+
+    // Mutable instances are not nice :(
+    public ITextComponent asComponentCopy() {
+        return this.asComponent().createCopy();
+    }
+
+    public String toJson() {
+        if (this.json == null) {
+            this.json = ITextComponent.Serializer.componentToJson(this.asComponent());
+        }
+        return this.json;
+    }
+
+    public String toLegacy(final char code) {
+        return ((IMixinTextComponent) this.asComponent()).toLegacy(code);
     }
 
     @Override

@@ -31,8 +31,8 @@ import org.spongepowered.api.text.title.Title;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.common.interfaces.text.IMixinText;
 import org.spongepowered.common.interfaces.text.IMixinTitle;
+import org.spongepowered.common.text.impl.TextImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,13 +72,13 @@ public abstract class MixinTitle implements IMixinTitle {
                 this.packets.add(new SPacketTitle(this.fadeIn.orElse(20), this.stay.orElse(60), this.fadeOut.orElse(20)));
             }
             if (this.subtitle.isPresent()) {
-                this.packets.add(new SPacketTitle(SPacketTitle.Type.SUBTITLE, ((IMixinText) this.subtitle.get()).toComponent()));
+                this.packets.add(new SPacketTitle(SPacketTitle.Type.SUBTITLE, ((TextImpl) this.subtitle.get()).asComponentCopy()));
             }
             if (this.actionBar.isPresent()) {
-                this.packets.add(new SPacketTitle(SPacketTitle.Type.ACTIONBAR, ((IMixinText) this.actionBar.get()).toComponent()));
+                this.packets.add(new SPacketTitle(SPacketTitle.Type.ACTIONBAR, ((TextImpl) this.actionBar.get()).asComponentCopy()));
             }
             if (this.title.isPresent()) {
-                this.packets.add(new SPacketTitle(SPacketTitle.Type.TITLE, ((IMixinText) this.title.get()).toComponent()));
+                this.packets.add(new SPacketTitle(SPacketTitle.Type.TITLE, ((TextImpl) this.title.get()).asComponentCopy()));
             }
         }
 

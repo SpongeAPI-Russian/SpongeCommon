@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
+import net.minecraft.util.text.ITextComponent;
 import org.spongepowered.api.scoreboard.Score;
 import org.spongepowered.api.text.ScoreText;
 import org.spongepowered.api.text.Text;
@@ -76,6 +77,12 @@ public final class ScoreTextImpl extends TextImpl implements ScoreText {
     @Override
     public Builder toBuilder() {
         return new Builder(this);
+    }
+
+    // TODO
+    @Override
+    protected ITextComponent createComponent() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

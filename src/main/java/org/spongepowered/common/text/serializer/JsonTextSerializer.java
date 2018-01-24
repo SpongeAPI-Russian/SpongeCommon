@@ -30,7 +30,7 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextParseException;
 import org.spongepowered.api.text.serializer.TextSerializer;
 import org.spongepowered.common.interfaces.text.IMixinTextComponent;
-import org.spongepowered.common.interfaces.text.IMixinText;
+import org.spongepowered.common.text.impl.TextImpl;
 
 /**
  * TextSerializer implementation for the json format.
@@ -49,7 +49,7 @@ public final class JsonTextSerializer implements TextSerializer {
 
     @Override
     public String serialize(Text text) {
-        return ((IMixinText) text).toJson();
+        return ((TextImpl) text).toJson();
     }
 
     @Override
